@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Credential Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    .form-section, .preview-section {
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 5px;
+      width: 300px;
+      margin-top: 5px;
+    }
+
+    #certificate {
+      width: 800px;
+      height: 600px;
+      background: white;
+      border: 2px solid #ccc;
+      padding: 40px;
+      margin-top: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    #certificate h1 {
+      margin-top: 40px;
+      font-size: 32px;
+    }
+
+    #certificate .recipient {
+      font-size: 28px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    #certificate .details {
+      font-size: 18px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Credential Creator</h2>
+
+  <div class="form-section">
+    <label>Recipient Name:</label>
+    <input type="text" id="nameInput" placeholder="John Smith" oninput="updateCertificate()" />
+
+    <label>Course Title:</label>
+    <input type="text" id="courseInput" placeholder="Web Development 101" oninput="updateCertificate()" />
+
+    <label>Issuer:</label>
+    <input type="text" id="issuerInput" placeholder="My Organization" oninput="updateCertificate()" />
+
+    <label>Date:</label>
+    <input type="text" id="dateInput" placeholder="July 5, 2025" oninput="updateCertificate()" />
+
+    <button onclick="downloadCertificate()">Download as PDF</button>
+  </div>
+
+  <div class="preview-section">
+    <div id="certificate">
+      <h1>Certificate of Completion</h1>
+      <div class="recipient" id="certName">John Smith</div>
+      <div class="details">
+        has successfully completed<br/>
+        <strong id="certCourse">Web Development 101</strong><br/><br/>
+        Issued by <span id="certIssuer">My Organization</span><br/>
+        on <span id="certDate">July 5, 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateCertificate() {
+      document.getElementById('certName').innerText = document.getElementById('nameInput').value || "John Smith";
+      document.getElementById('certCourse').innerText = document.getElementById('courseInput').value || "Web Development 101";
+      document.getElementById('certIssuer').innerText = document.getElementById('issuerInput').value || "My Organization";
+      document.getElementById('certDate').innerText = document.getElementById('dateInput').value || "July 5, 2025";
+    }
+
+    async function downloadCertificate() {
+      const cert = document.getElementById('certificate');
+      const canvas = await html2canvas(cert);
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('landscape', 'pt', [cert.offsetWidth, cert.offsetHeight]);
+      pdf.addImage(imgData, 'PNG', 0, 0, cert.offsetWidth, cert.offsetHeight);
+      pdf.save('certificate.pdf');
+    }
+  </script>
+
+</body>
+</html>
