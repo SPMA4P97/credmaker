@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Credential Generator</title>
+  <title>Certificate Generator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <style>
     body {
-      font-family: serif;
-      padding: 20px;
+      font-family: 'Georgia', serif;
       background: #f4f4f4;
+      padding: 20px;
     }
 
     .form-section {
-      margin-bottom: 30px;
-      max-width: 600px;
+      max-width: 700px;
+      margin-bottom: 40px;
     }
 
     label {
@@ -36,32 +35,77 @@
     }
 
     #certificate {
-      width: 800px;
-      height: 600px;
+      width: 1120px;
+      height: 792px; /* landscape 11" x 8.5" at 96dpi */
       background: white;
-      border: 2px solid #000;
-      margin-top: 40px;
-      text-align: center;
-      padding: 60px 40px;
+      border: 2px solid #333;
+      padding: 40px 60px;
       margin-bottom: 40px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
-    #certificate h1 {
-      font-size: 30px;
-      margin-bottom: 20px;
-      text-transform: uppercase;
+    .cert-header {
+      background: #1a237e;
+      color: white;
+      padding: 15px;
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 6px;
+      margin-bottom: 30px;
     }
 
-    #certificate .line {
-      margin: 12px 0;
-      font-size: 18px;
-    }
-
-    #certificate .custom-description {
-      margin-top: 30px;
+    .cert-subheader {
+      text-align: center;
       font-size: 16px;
+      color: #444;
+      margin-top: -20px;
+      margin-bottom: 30px;
+    }
+
+    .cert-body {
+      text-align: center;
+    }
+
+    .cert-body h1 {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .cert-role {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .cert-desc {
+      font-size: 16px;
+      margin: 10px 0;
       font-style: italic;
       white-space: pre-wrap;
+    }
+
+    .cert-volumes {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .cert-footer {
+      margin-top: 40px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .issue-date-box {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: 2px solid #1a237e;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1a237e;
     }
   </style>
 </head>
@@ -71,35 +115,43 @@
 
   <div class="form-section">
     <label>Issuing Organization:</label>
-    <input type="text" id="orgInput" placeholder="e.g., Journal of Modern Ideas" oninput="updateCertificate()"/>
+    <input type="text" id="orgInput" placeholder="e.g., Journal of Emerging Sport Studies" oninput="updateCertificate()" />
 
     <label>Recipient Name:</label>
-    <input type="text" id="nameInput" placeholder="e.g., Jane Doe" oninput="updateCertificate()"/>
+    <input type="text" id="nameInput" placeholder="e.g., Jane Doe" oninput="updateCertificate()" />
 
     <label>Role:</label>
-    <input type="text" id="roleInput" placeholder="e.g., Editorial Assistant" oninput="updateCertificate()"/>
+    <input type="text" id="roleInput" placeholder="e.g., Peer Reviewer" oninput="updateCertificate()" />
 
     <label>Issue Date:</label>
-    <input type="text" id="dateInput" placeholder="e.g., July 5, 2025" oninput="updateCertificate()"/>
+    <input type="text" id="dateInput" placeholder="e.g., June 4, 2025" oninput="updateCertificate()" />
 
     <label>Volume(s) <small>(optional)</small>:</label>
-    <input type="text" id="volumeInput" placeholder="e.g., Vol. 10 & 11" oninput="updateCertificate()"/>
+    <input type="text" id="volumeInput" placeholder="e.g., Volume 1, Volume 2, Volume 12" oninput="updateCertificate()" />
 
     <label>Description:</label>
-    <textarea rows="4" id="descInput" placeholder="Custom message or citation text..." oninput="updateCertificate()"></textarea>
+    <textarea rows="4" id="descInput" placeholder="e.g., Did well and stuff" oninput="updateCertificate()"></textarea>
 
     <button onclick="downloadCertificate()">Download as PDF</button>
   </div>
 
   <div id="certificate">
-    <h1 id="certOrg">[Issuing Organization]</h1>
-    <div class="line">This certifies that</div>
-    <div class="line" style="font-size: 24px; font-weight: bold;" id="certName">[Recipient Name]</div>
-    <div class="line">has served as</div>
-    <div class="line" id="certRole">[Role]</div>
-    <div class="line" id="certVolume" style="display: none;"></div>
-    <div class="line">on <span id="certDate">[Issue Date]</span></div>
-    <div class="custom-description" id="certDesc"></div>
+    <div class="cert-header" id="certOrg">[Issuing Organization]</div>
+    <div class="cert-subheader">Digital Credential Certificate</div>
+
+    <div class="cert-body">
+      <div>This is to certify that</div>
+      <h1 id="certName">[Recipient Name]</h1>
+      <div>has successfully served as</div>
+      <div class="cert-role" id="certRole">[Role]</div>
+      <div class="cert-desc" id="certDesc"></div>
+      <div class="cert-volumes" id="certVolume" style="display: none;"></div>
+      <div class="issue-date-box" id="certDate">[Issue Date]</div>
+    </div>
+
+    <div class="cert-footer">
+      Credential Generator | Generated via in-browser form
+    </div>
   </div>
 
   <script>
@@ -120,7 +172,7 @@
       const volEl = document.getElementById('certVolume');
       if (volume) {
         volEl.style.display = 'block';
-        volEl.innerText = `for Volume(s): ${volume}`;
+        volEl.innerText = `Contributing to: ${volume}`;
       } else {
         volEl.style.display = 'none';
         volEl.innerText = '';
@@ -129,15 +181,14 @@
 
     async function downloadCertificate() {
       const cert = document.getElementById('certificate');
-      const canvas = await html2canvas(cert);
+      const canvas = await html2canvas(cert, { scale: 2 });
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('landscape', 'pt', [cert.offsetWidth, cert.offsetHeight]);
       pdf.addImage(imgData, 'PNG', 0, 0, cert.offsetWidth, cert.offsetHeight);
-      pdf.save('credential.pdf');
+      pdf.save('certificate.pdf');
     }
 
-    // Initialize preview
     updateCertificate();
   </script>
 
