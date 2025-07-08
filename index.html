@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Certificate Generator</title>
+  <title>Credential/Certificate Generator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <style>
@@ -54,9 +54,10 @@
       box-sizing: border-box;
       position: relative;
       overflow: hidden;
+      padding: 80px 60px;
     }
 
-    #watermark {
+    #watermarkImg {
       position: absolute;
       width: 100%;
       height: 100%;
@@ -66,7 +67,7 @@
       pointer-events: none;
     }
 
-    #logo {
+    #logoImg {
       position: absolute;
       top: 30px;
       left: 30px;
@@ -75,23 +76,19 @@
       z-index: 2;
     }
 
-    .cert-header {
-      background: #1a237e;
-      color: white;
-      padding: 20px;
-      font-size: 30px;
+    .cert-org {
+      font-size: 22px;
       font-weight: bold;
-      text-align: center;
-      border-radius: 6px;
-      margin-bottom: 20px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
       position: relative;
       z-index: 2;
     }
 
-    .cert-subheader {
-      text-align: center;
-      font-size: 16px;
-      color: #444;
+    .cert-title {
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: 1px;
       margin-bottom: 40px;
       position: relative;
       z-index: 2;
@@ -107,11 +104,12 @@
 
     .cert-body h1 {
       font-size: 36px;
-      margin-bottom: 10px;
+      margin: 30px 0 10px;
+      color: #1a237e;
     }
 
     .cert-role {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
       margin: 25px 0 10px 0;
     }
@@ -128,30 +126,11 @@
       margin: 15px 0;
     }
 
-    .cert-footer {
-      text-align: center;
-      margin-top: 50px;
-      font-size: 16px;
-    }
-
-    .issue-date-box {
-      display: inline-block;
-      margin-top: 40px;
-      padding: 10px 24px;
-      border: 2px solid #1a237e;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #1a237e;
-    }
-
     .signature {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-top: 60px;
       text-align: center;
       z-index: 2;
+      position: relative;
     }
 
     .signature-name {
@@ -162,6 +141,14 @@
     .signature-title {
       font-size: 14px;
       margin-top: 5px;
+    }
+
+    .issue-date-line {
+      font-size: 16px;
+      margin-top: 30px;
+      font-style: italic;
+      position: relative;
+      z-index: 2;
     }
   </style>
 </head>
@@ -206,20 +193,26 @@
   <div id="certificate">
     <img id="watermarkImg" src="" alt="Watermark" style="display: none;" />
     <img id="logoImg" src="" alt="Logo" style="display: none;" />
-    <div class="cert-header" id="certOrg">[Issuing Organization]</div>
-    <div class="cert-subheader">Digital Credential Certificate</div>
+
+    <div class="cert-org" id="certOrg">[Issuing Organization]</div>
+    <div class="cert-title">Digital Credential Certificate</div>
+
     <div class="cert-body">
-      <div style="margin-bottom: 20px;">This is to certify that</div>
+      <div>This is to certify that</div>
       <h1 id="certName">[Recipient Name]</h1>
-      <div style="margin-top: 20px;">has successfully served as</div>
+      <div>has successfully served as</div>
       <div class="cert-role" id="certRole">[Role]</div>
       <div class="cert-desc" id="certDesc"></div>
       <div class="cert-volumes" id="certVolume" style="display: none;"></div>
-      <div class="issue-date-box" id="certDate">[Issue Date]</div>
     </div>
+
     <div class="signature">
       <div class="signature-name" id="signName">[Signature Name]</div>
       <div class="signature-title" id="signTitle">[Signature Title]</div>
+    </div>
+
+    <div class="issue-date-line">
+      <strong>Date of Issue:</strong> <span id="certDate">[Issue Date]</span>
     </div>
   </div>
 
